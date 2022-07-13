@@ -3,6 +3,7 @@ package api
 import (
 	"backend/pkg/views/home"
 	"backend/pkg/views/posts"
+	"backend/pkg/views/products"
 	"context"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -28,6 +29,7 @@ func New(db *gorm.DB, log *logrus.Logger) Service {
 
 	home.New(e)
 	posts.New(e, db)
+	products.New(e, db)
 
 	return Service{e, log}
 }

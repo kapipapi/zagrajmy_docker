@@ -1,10 +1,8 @@
 import React from "react";
 
 export const Menu = () => {
-    return <div>
-        <ul className="inline">
-            <li>Refresh</li>
-            <li>New post</li>
-        </ul>
+    return <div className={"flex space-x-4 p-2"}>
+        <button className={"rounded bg-lime-300"}>Refresh</button>
+        <button>New post</button>
     </div>;
 };
