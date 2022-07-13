@@ -1,7 +1,7 @@
 import React from "react";
 import { Products } from "../models/Products";
 import { useGetData } from "../../../hooks/useGetData";
-import { ProductCard } from "./Card";
+import { NewProductCard, ProductCard } from "./Card";
 
 export const List = () => {
 
@@ -9,6 +9,7 @@ export const List = () => {
 
     return <div className={"grid grid-cols-5 gap-5"}>
         {products &&
-            products.map((product) => <ProductCard product={product}/>)}
+            products.map((product) => <ProductCard product={product} />)}
+        <NewProductCard />
     </div>;
 };

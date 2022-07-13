@@ -1,20 +1,16 @@
-import React, { useState } from "react";
-import { Form } from "./components/form/Form";
+import React from "react";
+import { Link, Outlet } from "react-router-dom";
 import { List } from "./components/List";
 
 export const Shop = () => {
-    const [isFormOpen, setFormOpen] = useState(false);
 
     return <div className="w-9/12">
         <div className={"mb-5"}>
-            <p className={"text-xl underline"}>GTA V CAR SHOP</p>
-            <button className={"bg-rose-300 p-2 text-md"}
-                    onClick={() => setFormOpen(!isFormOpen)}>{isFormOpen ? "Car list" : "Add car"}</button>
+            <p className={"text-3xl font-semibold m-5"}>GTA V CAR SHOP</p>
         </div>
         <div>
-            {
-                isFormOpen ? <Form closeForm={() => setFormOpen(false)} /> : <List />
-            }
+            <List />
+            <Outlet />
         </div>
     </div>;
 };
