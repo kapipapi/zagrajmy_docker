@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
-export const useGetData = <T, >(url: string) => {
+export const useGetData = <T, >(url: string, query?: URLSearchParams) => {
     const [data, setData] = useState<T | undefined>();
+    const urlWithQuery = useMemo(() => query ? url + "?" + query.toString() : url, [query, url]);
 
     useEffect(() => {
-        fetch(url, {
+        fetch(urlWithQuery, {
             method: "GET",
             mode: "cors"
         })
@@ -13,7 +14,7 @@ export const useGetData = <T, >(url: string) => {
                 else throw Error(`Network error ${res.statusText} (${res.status}) with ${res.type} request on ${res.url}.`);
             })
             .then(json => setData(json));
-    }, []);
+    }, [url, urlWithQuery]);
 
     return data;
 };

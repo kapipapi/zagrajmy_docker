@@ -2,7 +2,6 @@ package api
 
 import (
 	"backend/pkg/views/home"
-	"backend/pkg/views/posts"
 	"backend/pkg/views/products"
 	"context"
 	"github.com/labstack/echo/v4"
@@ -28,8 +27,9 @@ func New(db *gorm.DB, log *logrus.Logger) Service {
 	e.Use(middleware.CORS())
 
 	home.New(e)
-	posts.New(e, db)
 	products.New(e, db)
+
+	e.Static("/images", "images")
 
 	return Service{e, log}
 }

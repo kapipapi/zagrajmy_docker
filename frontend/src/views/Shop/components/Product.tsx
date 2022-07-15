@@ -15,7 +15,7 @@ export const Product = () => {
             <Link to={"/shop"}><p className={"text-xl"}>Back to shop</p></Link>
         </div>
         <div className={"flex justify-end"}>
-            <img src={product.photoUrl} width={500} alt={product.name} className={"m-5"} />
+            <img src={product.mainPhotoUrl} width={500} alt={product.name} className={"m-5"} />
         </div>
         <div className={"flex flex-col mt-5"}>
             <p>

@@ -1,11 +1,13 @@
 import React from "react";
 
-export const sendData = <IN, OUT>(url: string, data: IN): Promise<OUT> => {
+type IN = string | FormData;
+
+export const sendData = <OUT, >(url: string, data: IN, headers?: HeadersInit): Promise<OUT> => {
     return fetch(url, {
         method: "POST",
         mode: "cors",
-        body: JSON.stringify(data),
-        headers: { "Content-Type": "application/json" }
+        body: data,
+        headers: headers
     }).then(res => {
         if (res.ok) return res.json();
         else throw Error(`Network error ${res.statusText} (${res.status}) with ${res.type} request on ${res.url}.`);

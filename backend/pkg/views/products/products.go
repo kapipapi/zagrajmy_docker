@@ -3,7 +3,11 @@ package products
 import (
 	"backend/pkg/models"
 	"encoding/json"
+	"fmt"
+	"io"
 	"net/http"
+	"os"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
@@ -27,49 +31,27 @@ func New(e Server, db *gorm.DB) {
 		db: db,
 	}
 
-	e.GET("/api/products", s.getAllProducts)
+	e.GET("/api/products", s.getProducts)
 	e.GET("/api/product/:productId", s.getProductById)
 	e.POST("/api/product/new", s.newProduct)
 }
 
-func (s Service) getAllProducts(c echo.Context) error {
+func (s Service) getProducts(c echo.Context) error {
+	category := c.QueryParam("category")
+
 	var products []models.Product
-	err := s.db.Debug().WithContext(c.Request().Context()).Table("shop.products").Find(&products).Error
+	err := s.db.
+		Debug().
+		WithContext(c.Request().Context()).
+		Table("shop.products").
+		Where("category", category).
+		Find(&products).Error
 	if err != nil {
 		log.Error(err)
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 
 	jsonBytes, err := json.Marshal(products)
-	if err != nil {
-		log.Error(err)
-		return c.JSON(http.StatusInternalServerError, err.Error())
-	}
-
-	return c.JSONBlob(http.StatusOK, jsonBytes)
-}
-
-type OKResponse struct {
-	OK bool `json:"ok"`
-}
-
-func (s Service) newProduct(c echo.Context) error {
-	var p models.Product
-	if err := c.Bind(&p); err != nil {
-		return c.JSON(http.StatusBadRequest, err.Error())
-	}
-
-	if p.Info == "" {
-		p.Info = "{}"
-	}
-
-	err := s.db.Debug().WithContext(c.Request().Context()).Table("shop.products").Create(&p).Error
-	if err != nil {
-		log.Error(err)
-		return c.JSON(http.StatusInternalServerError, err.Error())
-	}
-
-	jsonBytes, err := json.Marshal(OKResponse{OK: true})
 	if err != nil {
 		log.Error(err)
 		return c.JSON(http.StatusInternalServerError, err.Error())
@@ -92,6 +74,75 @@ func (s Service) getProductById(c echo.Context) error {
 	}
 
 	jsonBytes, err := json.Marshal(product)
+	if err != nil {
+		log.Error(err)
+		return c.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	return c.JSONBlob(http.StatusOK, jsonBytes)
+}
+
+type OKResponse struct {
+	OK bool `json:"ok"`
+}
+
+func (s Service) newProduct(c echo.Context) error {
+	name := c.FormValue("name")
+	price := c.FormValue("price")
+	quantity := c.FormValue("quantity")
+	category := c.FormValue("category")
+
+	file, err := c.FormFile("file")
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err.Error())
+	}
+	src, err := file.Open()
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err.Error())
+	}
+	defer src.Close()
+
+	filePath := fmt.Sprintf("images/%s/%s", category, file.Filename)
+
+	// Destination
+	dst, err := os.Create(filePath)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err.Error())
+	}
+	defer dst.Close()
+
+	// Copy
+	if _, err = io.Copy(dst, src); err != nil {
+		return c.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	priceParsed, err := strconv.ParseFloat(price, 64)
+	if err != nil {
+		log.Error(err)
+		return c.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	quantityParsed, err := strconv.Atoi(quantity)
+	if err != nil {
+		log.Error(err)
+		return c.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	p := models.Product{
+		Name:         name,
+		Price:        priceParsed,
+		Quantity:     quantityParsed,
+		Category:     models.Category(category),
+		MainPhotoUrl: fmt.Sprintf("http://%s/%s", c.Request().Host, filePath),
+	}
+
+	err = s.db.Debug().WithContext(c.Request().Context()).Table("shop.products").Create(&p).Error
+	if err != nil {
+		log.Error(err)
+		return c.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	jsonBytes, err := json.Marshal(p)
 	if err != nil {
 		log.Error(err)
 		return c.JSON(http.StatusInternalServerError, err.Error())

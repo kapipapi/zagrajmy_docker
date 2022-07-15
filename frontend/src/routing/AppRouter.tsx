@@ -3,13 +3,11 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import { Layout } from "../views/Layout/Layout";
 
-import { Home } from "views/home/Home";
+import { Home } from "views/Home/Home";
 
-import { Blog } from "../views/blog/Blog";
-
-import { Shop } from "../views/shop/Shop";
-import { Form as NewProductForm } from "views/shop/components/form/Form";
-import { Product as ProductInfoPage } from "../views/shop/components/Product";
+import { Shop } from "../views/Shop/Shop";
+import { Product as ProductInfoPage } from "../views/Shop/components/Product";
+import { Form } from "../views/Shop/components/Form/Form";
 
 export const AppRouter = () => {
     return <div>
@@ -18,13 +16,9 @@ export const AppRouter = () => {
                 <Route path="/" element={<Layout />}>
                     <Route index element={<Home />} />
 
-                    <Route path="blog" element={<Blog />} />
-
-                    <Route path="shop" element={<Shop />}>
-                        <Route path="new" element={<NewProductForm />} />
-                    </Route>
+                    <Route path="shop" element={<Shop />} />
+                    <Route path="/shop/new" element={<Form />} />
                     <Route path="/shop/:productId" element={<ProductInfoPage />} />
-
                 </Route>
             </Routes>
         </BrowserRouter>
