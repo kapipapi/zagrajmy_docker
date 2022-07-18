@@ -6,6 +6,7 @@ import { Game } from "./types";
 import { useGetData } from "../../hooks/useGetData";
 import { Sports } from "../../models/Sport";
 import { Places } from "../../models/Place";
+import { Users } from "../../models/User";
 
 export const Form = () => {
     const { register, handleSubmit, reset } = useForm<Game>();
@@ -57,6 +58,13 @@ export const Form = () => {
                     <div className={"mb-5"}>
                         <label>Datetime:</label>
                         <input {...register("start_datetime")} className={"w-full"} type={"datetime-local"} />
+                    </div>
+                </div>
+
+                <div>
+                    <div className={"mb-5"}>
+                        <label>Players:</label>
+                        <input type={"text"} className={"w-full"} {...register("users_ids")}/>
                     </div>
                 </div>
 

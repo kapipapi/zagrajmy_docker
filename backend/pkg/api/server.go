@@ -15,7 +15,6 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/sirupsen/logrus"
 
-	"backend/pkg/views/home"
 	"backend/pkg/views/user"
 )
 
@@ -31,7 +30,6 @@ func New(db *gorm.DB, log *logrus.Logger) Service {
 
 	e.Use(middleware.CORS())
 
-	home.New(e)
 	user.New(e, db)
 	place.New(e, db)
 	sport.New(e, db)

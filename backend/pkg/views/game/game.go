@@ -5,8 +5,12 @@ import (
 	"encoding/json"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
+	"github.com/pkg/errors"
 	"gorm.io/gorm"
 	"net/http"
+	"strconv"
+	"strings"
+	"time"
 )
 
 type Server interface {
@@ -26,6 +30,7 @@ func New(e Server, db *gorm.DB) {
 	}
 
 	e.GET("/api/games/get", s.getGames)
+	e.POST("/api/games/new", s.createNewGame)
 }
 
 func (s Service) getGames(c echo.Context) error {
@@ -72,72 +77,70 @@ func (s Service) getGames(c echo.Context) error {
 //
 //	return c.JSONBlob(http.StatusOK, jsonBytes)
 //}
-//
+
 //type OKResponse struct {
 //	OK bool `json:"ok"`
 //}
-//
-//func (s Service) newProduct(c echo.Context) error {
-//	name := c.FormValue("name")
-//	price := c.FormValue("price")
-//	quantity := c.FormValue("quantity")
-//	category := c.FormValue("category")
-//
-//	file, err := c.FormFile("file")
-//	if err != nil {
-//		return c.JSON(http.StatusInternalServerError, err.Error())
-//	}
-//	src, err := file.Open()
-//	if err != nil {
-//		return c.JSON(http.StatusInternalServerError, err.Error())
-//	}
-//	defer src.Close()
-//
-//	filePath := fmt.Sprintf("images/%s/%s", category, file.Filename)
-//
-//	// Destination
-//	dst, err := os.Create(filePath)
-//	if err != nil {
-//		return c.JSON(http.StatusInternalServerError, err.Error())
-//	}
-//	defer dst.Close()
-//
-//	// Copy
-//	if _, err = io.Copy(dst, src); err != nil {
-//		return c.JSON(http.StatusInternalServerError, err.Error())
-//	}
-//
-//	priceParsed, err := strconv.ParseFloat(price, 64)
-//	if err != nil {
-//		log.Error(err)
-//		return c.JSON(http.StatusInternalServerError, err.Error())
-//	}
-//
-//	quantityParsed, err := strconv.Atoi(quantity)
-//	if err != nil {
-//		log.Error(err)
-//		return c.JSON(http.StatusInternalServerError, err.Error())
-//	}
-//
-//	p := models.Product{
-//		Name:         name,
-//		Price:        priceParsed,
-//		Quantity:     quantityParsed,
-//		Category:     models.Category(category),
-//		MainPhotoUrl: fmt.Sprintf("http://%s/%s", c.Request().Host, filePath),
-//	}
-//
-//	err = s.db.Debug().WithContext(c.Request().Context()).Table("shop.products").Create(&p).Error
-//	if err != nil {
-//		log.Error(err)
-//		return c.JSON(http.StatusInternalServerError, err.Error())
-//	}
-//
-//	jsonBytes, err := json.Marshal(p)
-//	if err != nil {
-//		log.Error(err)
-//		return c.JSON(http.StatusInternalServerError, err.Error())
-//	}
-//
-//	return c.JSONBlob(http.StatusOK, jsonBytes)
-//}
+
+type requestGameModel struct {
+	SportID  string `json:"sport_id,omitempty"`
+	PlaceID  string `json:"place_id,omitempty"`
+	Datetime string `json:"start_datetime,omitempty"`
+	UsersIDs string `json:"users_ids,omitempty"`
+}
+
+func (s Service) createNewGame(c echo.Context) error {
+	var g requestGameModel
+	if err := c.Bind(&g); err != nil {
+		return errors.Wrap(err, "binding request data")
+	}
+
+	timeParsed, err := time.Parse("2006-01-02T15:04", g.Datetime)
+	if err != nil {
+		return errors.Wrap(err, "parsing datetime")
+	}
+
+	sportIDParsed, err := strconv.ParseUint(g.SportID, 10, 32)
+	if err != nil {
+		return errors.Wrap(err, "parsing sport id")
+	}
+
+	placeIDParsed, err := strconv.ParseUint(g.PlaceID, 10, 32)
+	if err != nil {
+		return errors.Wrap(err, "parsing place id")
+	}
+
+	var usersIDs []*models.User
+	for _, id := range strings.Split(g.UsersIDs, ",") {
+		uidParsed, err := strconv.ParseUint(id, 10, 32)
+		if err != nil {
+			return errors.Wrap(err, "parsing user id")
+		}
+
+		append(usersIDs, &models.User{
+			Model: gorm.Model{
+				ID: uint(uidParsed),
+			},
+		})
+	}
+
+	p := models.Game{
+		SportID:       uint(sportIDParsed),
+		PlaceID:       uint(placeIDParsed),
+		StartDatetime: timeParsed,
+	}
+
+	//err = s.db.Debug().WithContext(c.Request().Context()).Create(&p).Error
+	//if err != nil {
+	//	log.Error(err)
+	//	return c.JSON(http.StatusInternalServerError, err.Error())
+	//}
+
+	jsonBytes, err := json.Marshal(p)
+	if err != nil {
+		log.Error(err)
+		return c.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	return c.JSONBlob(http.StatusOK, jsonBytes)
+}
