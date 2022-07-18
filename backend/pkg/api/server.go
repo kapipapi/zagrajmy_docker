@@ -1,8 +1,8 @@
 package api
 
 import (
+	"backend/pkg/views/crud"
 	"backend/pkg/views/home"
-	"backend/pkg/views/products"
 	"context"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -27,7 +27,7 @@ func New(db *gorm.DB, log *logrus.Logger) Service {
 	e.Use(middleware.CORS())
 
 	home.New(e)
-	products.New(e, db)
+	crud.New(e, db)
 
 	e.Static("/images", "images")
 
@@ -35,7 +35,6 @@ func New(db *gorm.DB, log *logrus.Logger) Service {
 }
 
 func (s Service) Start() {
-
 	go func() {
 		if err := s.Echo.Start(":8080"); err != nil && err != http.ErrServerClosed {
 			s.Log.Fatal("shutting down the server")
