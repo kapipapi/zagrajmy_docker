@@ -1,17 +1,22 @@
 package api
 
 import (
-	"backend/pkg/views/crud"
-	"backend/pkg/views/home"
+	"backend/pkg/views/game"
+	"backend/pkg/views/place"
+	"backend/pkg/views/sport"
 	"context"
-	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
-	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 	"net/http"
 	"os"
 	"os/signal"
 	"time"
+
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
+	"github.com/sirupsen/logrus"
+
+	"backend/pkg/views/home"
+	"backend/pkg/views/user"
 )
 
 type Service struct {
@@ -27,7 +32,10 @@ func New(db *gorm.DB, log *logrus.Logger) Service {
 	e.Use(middleware.CORS())
 
 	home.New(e)
-	crud.New(e, db)
+	user.New(e, db)
+	place.New(e, db)
+	sport.New(e, db)
+	game.New(e, db)
 
 	e.Static("/images", "images")
 

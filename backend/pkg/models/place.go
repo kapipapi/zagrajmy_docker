@@ -7,4 +7,5 @@ type Place struct {
 	Name    string
 	Address string
 	Games   []Game
+	Sports  []*Sport `gorm:"many2many:place_sports;"`
 }

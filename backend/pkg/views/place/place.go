@@ -1,6 +1,7 @@
-package crud
+package place
 
 import (
+	"backend/pkg/models"
 	"encoding/json"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
@@ -24,17 +25,16 @@ func New(e Server, db *gorm.DB) {
 		db: db,
 	}
 
-	e.GET("/api/:tableName/get", s.getProducts)
+	e.GET("/api/places/get", s.getPlaces)
 }
 
-func (s Service) getProducts(c echo.Context) error {
-	tableName := c.Param("tableName")
-
-	var dto []interface{}
+func (s Service) getPlaces(c echo.Context) error {
+	var dto []models.Place
 	err := s.db.
 		Debug().
 		WithContext(c.Request().Context()).
-		Table(tableName).
+		Preload("Sports").
+		Table("public.places").
 		Find(&dto).Error
 	if err != nil {
 		log.Error(err)
