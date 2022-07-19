@@ -56,32 +56,6 @@ func (s Service) getGames(c echo.Context) error {
 	return c.JSONBlob(http.StatusOK, jsonBytes)
 }
 
-//func (s Service) getProductById(c echo.Context) error {
-//	productId := c.Param("productId")
-//	if productId == "" {
-//		return c.JSON(http.StatusBadRequest, "Bad product id")
-//	}
-//
-//	var product models.Product
-//	err := s.db.Debug().WithContext(c.Request().Context()).Table("shop.products").Where("id", productId).First(&product).Error
-//	if err != nil {
-//		log.Error(err)
-//		return c.JSON(http.StatusInternalServerError, err.Error())
-//	}
-//
-//	jsonBytes, err := json.Marshal(product)
-//	if err != nil {
-//		log.Error(err)
-//		return c.JSON(http.StatusInternalServerError, err.Error())
-//	}
-//
-//	return c.JSONBlob(http.StatusOK, jsonBytes)
-//}
-
-//type OKResponse struct {
-//	OK bool `json:"ok"`
-//}
-
 type requestGameModel struct {
 	SportID  string `json:"sport_id,omitempty"`
 	PlaceID  string `json:"place_id,omitempty"`
@@ -110,6 +84,17 @@ func (s Service) createNewGame(c echo.Context) error {
 		return errors.Wrap(err, "parsing place id")
 	}
 
+	p := models.Game{
+		SportID:       uint(sportIDParsed),
+		PlaceID:       uint(placeIDParsed),
+		StartDatetime: timeParsed,
+	}
+
+	if err = s.db.Debug().WithContext(c.Request().Context()).Create(&p).Error; err != nil {
+		log.Error(err)
+		return c.JSON(http.StatusInternalServerError, err.Error())
+	}
+
 	var usersIDs []*models.User
 	for _, id := range strings.Split(g.UsersIDs, ",") {
 		uidParsed, err := strconv.ParseUint(id, 10, 32)
@@ -117,24 +102,21 @@ func (s Service) createNewGame(c echo.Context) error {
 			return errors.Wrap(err, "parsing user id")
 		}
 
-		append(usersIDs, &models.User{
+		usersIDs = append(usersIDs, &models.User{
 			Model: gorm.Model{
 				ID: uint(uidParsed),
 			},
 		})
 	}
 
-	p := models.Game{
-		SportID:       uint(sportIDParsed),
-		PlaceID:       uint(placeIDParsed),
-		StartDatetime: timeParsed,
+	if err := s.db.Debug().
+		WithContext(c.Request().Context()).
+		Model(&p).
+		Association("Users").
+		Append(usersIDs); err != nil {
+		log.Error(err)
+		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
-
-	//err = s.db.Debug().WithContext(c.Request().Context()).Create(&p).Error
-	//if err != nil {
-	//	log.Error(err)
-	//	return c.JSON(http.StatusInternalServerError, err.Error())
-	//}
 
 	jsonBytes, err := json.Marshal(p)
 	if err != nil {

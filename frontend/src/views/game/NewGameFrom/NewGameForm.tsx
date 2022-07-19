@@ -1,14 +1,13 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-import { sendData } from "../../hooks/sendData";
+import { sendData } from "../../../hooks/sendData";
 import { useNavigate } from "react-router-dom";
 import { Game } from "./types";
-import { useGetData } from "../../hooks/useGetData";
-import { Sports } from "../../models/Sport";
-import { Places } from "../../models/Place";
-import { Users } from "../../models/User";
+import { useGetData } from "../../../hooks/useGetData";
+import { Sports } from "../../../models/Sport";
+import { Places } from "../../../models/Place";
 
-export const Form = () => {
+export const NewGameForm = () => {
     const { register, handleSubmit, reset } = useForm<Game>();
     let navigate = useNavigate();
 
@@ -25,15 +24,15 @@ export const Form = () => {
     };
 
     return (
-        <div
-            className={"flex flex-col justify-center items-center w-full absolute bg-white px-8 pt-6 pb-8 mb-4 w-3/4"}>
-            <p className={"text-xl font-semibold mb-5"}>New game form</p>
-            <form onSubmit={handleSubmit(onSubmit)} className={"flex flex-col"}>
+        <div className={"grid grid-cols-2 justify-center items-center w-full absolute bg-white px-8 pt-6 pb-8 mt-32 w-1/3 shadow-xl"}>
+            <p className={"text-2xl font-semibold mb-5 col-span-1 col-start-1"}>New game form</p>
 
+            <form onSubmit={handleSubmit(onSubmit)} className={"flex flex-col col-span-1  col-start-1"}>
                 <div>
                     <div className={"mb-5"}>
                         <label>Sport:</label>
-                        <select {...register("sport_id")} className={"w-full"}>
+                        <select {...register("sport_id")} className={"w-full"} defaultValue={0}>
+                            <option value={-1} disabled={true}>SELECT SPORT</option>
                             {sports &&
                                 sports.map((sport) => {
                                     return <option value={sport.ID}>{sport.Name}</option>;
@@ -45,10 +44,14 @@ export const Form = () => {
                 <div>
                     <div className={"mb-5"}>
                         <label>Place:</label>
-                        <select {...register("place_id")} className={"w-full"}>
+                        <select {...register("place_id")} className={"w-full"} defaultValue={0}>
+                            <option value={-1} disabled={true}>SELECT PLACE</option>
                             {places &&
-                                places.map((place) => {
-                                    return <option value={place.ID}>{place.Name} - {place.Address}</option>;
+                                places.map((place, index) => {
+                                    return <option
+                                        value={place.ID}>
+                                        {place.Name} - {place.Address}
+                                    </option>;
                                 })}
                         </select>
                     </div>
@@ -64,7 +67,7 @@ export const Form = () => {
                 <div>
                     <div className={"mb-5"}>
                         <label>Players:</label>
-                        <input type={"text"} className={"w-full"} {...register("users_ids")}/>
+                        <input type={"text"} className={"w-full border p-2"} {...register("users_ids")} />
                     </div>
                 </div>
 
@@ -79,5 +82,7 @@ export const Form = () => {
                     <button className={"bg-green-300 rounded w-36 h-16 m-3"} type={"submit"}>SUBMIT</button>
                 </div>
             </form>
+
+            <div className={"flex w-full h-full ml-4 col-span-1 col-start-2 border justify-center bg-green-400"}>MAP</div>
         </div>);
 };

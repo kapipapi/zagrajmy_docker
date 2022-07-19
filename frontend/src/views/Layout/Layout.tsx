@@ -12,6 +12,8 @@ export const Layout = () => {
                 <Link to={"/"}><p className={styles.link + " text-xl font-bold"}>Let's play!</p></Link>
                 <p>|</p>
                 <Link to={"/game/new"}><p className={styles.link}>NEW GAME</p></Link>
+                <p>|</p>
+                <Link to={"/game/list"}><p className={styles.link}>GAMES LIST</p></Link>
             </div>
         </nav>
         <div className={"flex justify-center"}>
