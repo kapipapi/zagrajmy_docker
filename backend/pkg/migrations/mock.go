@@ -59,6 +59,8 @@ func mockPlaces(db *gorm.DB) error {
 				{Model: gorm.Model{ID: 1}},
 				{Model: gorm.Model{ID: 2}},
 			},
+			LocationLat: 54.406813,
+			LocationLon: 18.603876,
 		},
 		{
 			Name:    "XX LO im. Zbigniewa Herberta",
@@ -67,6 +69,8 @@ func mockPlaces(db *gorm.DB) error {
 				{Model: gorm.Model{ID: 1}},
 				{Model: gorm.Model{ID: 2}},
 			},
+			LocationLat: 54.361677,
+			LocationLon: 18.588700,
 		},
 	}
 
