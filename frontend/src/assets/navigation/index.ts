@@ -1,0 +1,1 @@
+export const arrowdown = () => require("./arrow-down.png");

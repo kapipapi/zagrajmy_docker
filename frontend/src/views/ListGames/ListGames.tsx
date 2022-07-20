@@ -1,8 +1,8 @@
 import React from "react";
-import { useGetData } from "../../../hooks/useGetData";
-import { Games } from "../../../models/Game";
-import { Sports } from "../../../models/Sport";
-import { Places } from "../../../models/Place";
+import { useGetData } from "../../hooks/useGetData";
+import { Games } from "../../models/Game";
+import { Sports } from "../../models/Sport";
+import { Places } from "../../models/Place";
 
 export const ListGames = () => {
     const games = useGetData<Games>("http://localhost:8080/api/games/get");

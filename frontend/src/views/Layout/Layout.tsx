@@ -6,17 +6,13 @@ export const Layout = () => {
         link: ""
     };
 
-    return <div className={"flex flex-col"}>
-        <nav className={"flex h-18 p-3 justify-center items-center bg-green-700 text-neutral-100 text-md"}>
-            <div className={"flex justify-start items-center w-9/12 space-x-5"}>
-                <Link to={"/"}><p className={styles.link + " text-xl font-bold"}>Let's play!</p></Link>
-                <p>|</p>
-                <Link to={"/game/new"}><p className={styles.link}>NEW GAME</p></Link>
-                <p>|</p>
-                <Link to={"/game/list"}><p className={styles.link}>GAMES LIST</p></Link>
+    return <div className={"flex flex-col h-screen"}>
+        <nav className={"flex h-20 p-10 justify-center items-center border-b-2"}>
+            <div className={"flex justify-start items-center w-full"}>
+                <Link to={"/"}><p className={styles.link + " text-2xl"}>findsquad.com</p></Link>
             </div>
         </nav>
-        <div className={"flex justify-center"}>
+        <div className={"flex justify-center h-full"}>
             <Outlet />
         </div>
     </div>;
