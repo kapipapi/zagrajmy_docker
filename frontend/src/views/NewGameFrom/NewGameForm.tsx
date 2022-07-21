@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
-import {sendData} from "../../hooks/sendData";
+import {sendData} from "../../tools/hooks/sendData";
 import {useNavigate} from "react-router-dom";
 import {Game} from "./types";
-import {useGetData} from "../../hooks/useGetData";
+import {useGetData} from "../../tools/hooks/useGetData";
 import {Sports} from "../../models/Sport";
 import {Places} from "../../models/Place";
 import {Map as LeafletMap} from 'leaflet';

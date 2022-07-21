@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import { Map as LeafletMap } from "leaflet";
-import { useGetData } from "../../../../hooks/useGetData";
+import { useGetData } from "../../../../tools/hooks/useGetData";
 import { Places } from "../../../../models/Place";
 
 export const MapView = () => {

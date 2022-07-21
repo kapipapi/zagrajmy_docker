@@ -1,5 +1,5 @@
 import React from "react";
-import { useGetData } from "../../hooks/useGetData";
+import { useGetData } from "../../tools/hooks/useGetData";
 import { Games } from "../../models/Game";
 import { Sports } from "../../models/Sport";
 import { Places } from "../../models/Place";

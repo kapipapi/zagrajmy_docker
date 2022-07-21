@@ -1,10 +1,9 @@
 import React, { useState } from "react";
-import { useGetData } from "../../../../hooks/useGetData";
+import { useGetData } from "../../../../tools/hooks/useGetData";
 import { Game, Games } from "../../../../models/Game";
 import { Sports } from "../../../../models/Sport";
 import { Places } from "../../../../models/Place";
-import { basketball } from "../../../../assets/sports_icons";
-import { arrowdown } from "../../../../assets/navigation";
+import { basketball, football, tennisball } from "../../../../assets/sports_icons";
 
 export const SideList = () => {
     const games = useGetData<Games>("http://localhost:8080/api/games/get");
@@ -14,20 +13,25 @@ export const SideList = () => {
     const [selected, setSelected] = useState<number | undefined>(undefined);
 
     return <div className={"flex flex-col h-full border-r-2 col-span-1"}>
-        <div className={"flex justify-center items-center p-2"}>
-            <button>
-                <div
-                    className={"flex rounded-full shadow-md py-3 px-6 text-xl justify-center items-center border active:shadow-sm"}
-                >
-                    games
-                    <img src={arrowdown()} alt={"arrowdown"} className={"ml-3 w-3"} />
-                </div>
-            </button>
+        <div className={"flex justify-center items-center p-2 space-x-8"}>
+            <div>
+                <span>Sport:</span>
+                <select className={"ml-2 p-2 rounded-md bg-slate-100"}>
+                    <option>all</option>
+                    <option>basketball</option>
+                    <option>football</option>
+                    <option>tennis</option>
+                </select>
+            </div>
+            <div>
+                <span>Date:</span>
+                <input className={"ml-2 p-2 rounded-md bg-slate-100"} type={"date"} />
+            </div>
         </div>
         {games &&
             games.map((game) => (
                 <button
-                    onClick={() => setSelected((state) => state === undefined ? game.ID : undefined)}
+                    onClick={() => setSelected((state) => state !== game.ID ? game.ID : undefined)}
                     className={"text-left"}
                 >
                     <GameItem
@@ -52,9 +56,9 @@ type GameItemProps = {
 
 const GameItem = ({ game, sports, places, open }: GameItemProps) => {
     return (
-        <div className={"rounded-[2rem] m-5 p-2 bg-slate-100 "}>
+        <div className={"rounded-[2rem] mx-5 my-2.5 p-2 bg-slate-100 "}>
             <div className={"flex h-12 items-center"}>
-                <GameItemIcon />
+                <GameItemIcon sport={game.SportID} />
                 <p className={"ml-5"}>{sports.filter((s) => s.ID === game.SportID)[0]?.Name ?? ""}</p>
             </div>
             <div className={`transition-height duration-500 overflow-hidden ${!open ? "h-0" : "h-20"}`}>
@@ -67,6 +71,15 @@ const GameItem = ({ game, sports, places, open }: GameItemProps) => {
     );
 };
 
-const GameItemIcon = () => {
-    return <img src={basketball()} alt={"basketball icon"} className={"h-full rounded-full"} />;
+const GameItemIcon = ({ sport }: { sport: number }) => {
+    switch (sport) {
+        case 1:
+            return <img src={basketball()} alt={"basketball icon"} className={"h-full rounded-full"} />;
+        case 2:
+            return <img src={football()} alt={"basketball icon"} className={"h-full rounded-full"} />;
+        case 3:
+            return <img src={tennisball()} alt={"basketball icon"} className={"h-full rounded-full"} />;
+        default:
+            return <></>;
+    }
 };
