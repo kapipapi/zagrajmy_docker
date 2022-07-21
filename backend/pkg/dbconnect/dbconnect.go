@@ -14,7 +14,7 @@ func createDBString() (string, error) {
 		return "", errors.New("No enviroment parameter: DB_CONTAINER_NAME")
 	}
 
-	return fmt.Sprintf("host=%s user=postgres password=postgres dbname=postgres port=5432 sslmode=disable", host), nil
+	return fmt.Sprintf("host=%s user=postgres password=postgres dbname=app port=5432 sslmode=disable", host), nil
 }
 
 func ConnectDB() (*gorm.DB, error) {
