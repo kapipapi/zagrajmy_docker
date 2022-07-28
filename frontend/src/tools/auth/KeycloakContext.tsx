@@ -1,30 +1,42 @@
-import React, { createContext, useCallback, useContext, useEffect, useState, FC } from 'react';
-import Keycloak from 'keycloak-js';
+import React, {
+    createContext,
+    useCallback,
+    useContext,
+    useEffect,
+    useState,
+    FC,
+} from 'react';
+import Keycloak from "keycloak-js";
 
 interface KeycloakContextT {
     initialized: boolean;
+    authHeader: {
+        Authorization: string;
+    };
     keycloak: Keycloak.KeycloakInstance;
 }
 
 const KeycloakContext = createContext<KeycloakContextT>({
-    keycloak: {} as  Keycloak.KeycloakInstance,
     initialized: false,
+    authHeader: { Authorization: '' },
+    keycloak: {} as Keycloak.KeycloakInstance,
 });
 
-type KeycloakProviderT= {
+type KeycloakProviderT = {
     LoadingComponent: JSX.Element;
     authClient: Keycloak.KeycloakInstance;
     children: JSX.Element | JSX.Element[];
 };
 
-const isUserAuthenticated = (authClient: Keycloak.KeycloakInstance) => !!authClient.idToken && !!authClient.token;
+const isUserAuthenticated = (authClient: Keycloak.KeycloakInstance) =>
+    !!authClient.idToken && !!authClient.token;
 
 export const KeycloakProvider: FC<KeycloakProviderT> = ({
     children,
     authClient,
     LoadingComponent,
 }) => {
-    const [authState, setAuthState ] = useState({
+    const [authState, setAuthState] = useState({
         initialized: false,
         isAuthenticated: false,
     });
@@ -33,17 +45,20 @@ export const KeycloakProvider: FC<KeycloakProviderT> = ({
         setAuthState({
             initialized: true,
             isAuthenticated: isUserAuthenticated(authClient),
-        });  
+        });
     }, [authClient]);
 
-    const refreshToken = useCallback(() => authClient.updateToken(5), [authClient]);
+    const refreshToken = useCallback(
+        () => authClient.updateToken(5),
+        [authClient]
+    );
 
     useEffect(() => {
         authClient.onTokenExpired = refreshToken;
         authClient.onAuthLogout = updateAuthState;
         authClient.onAuthRefreshSuccess = updateAuthState;
 
-        authClient.init({onLoad: 'login-required'}).then(updateAuthState);
+        authClient.init({}).then(updateAuthState);
         // eslint-disable-next-line
     }, []);
 
@@ -52,9 +67,15 @@ export const KeycloakProvider: FC<KeycloakProviderT> = ({
     if (!initialized) {
         return LoadingComponent;
     }
-    
+
+    const authHeader = {
+        Authorization: authClient.token ? `Bearer ${authClient.token}` : '',
+    };
+
     return (
-        <KeycloakContext.Provider value={{ keycloak: authClient, initialized }}>
+        <KeycloakContext.Provider
+            value={{ keycloak: authClient, initialized, authHeader }}
+        >
             {children}
         </KeycloakContext.Provider>
     );
