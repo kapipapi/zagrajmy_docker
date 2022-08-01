@@ -26,20 +26,19 @@ export const NewGameForm = () => {
     };
 
     let [map, setMap] = useState<LeafletMap | null>();
-    let [position, setPosition] = useState<[number, number]>([54.389177, 18.594233]);
     const watchPlaceID = watch("place_id");
 
     useEffect(() => {
-        console.log(watchPlaceID);
-        const loc = places?.filter(p => p.ID === watchPlaceID)[0];
+        // eslint-disable-next-line eqeqeq
+        const loc = places?.filter(p => p.ID == watchPlaceID)[0];
         if (loc) map?.flyTo([loc.LocationLat, loc.LocationLon], 17);
     }, [map, places, watchPlaceID]);
 
     return (
         <div
-            className={"grid grid-cols-1 sm:grid-cols-2 sm:gap-2 md:gap-5 justify-center items-center bg-white px-8 sm:pt-6 sm:pb-8 xl:mt-10 md:shadow-xl"}>
-            <p className={"sm:text-2xl font-semibold col-span-1 col-start-1"}>New game</p>
+            className={"grid grid-cols-1 sm:grid-cols-2 sm:gap-2 md:gap-5 justify-center items-center bg-white mx-1 md:px-8 sm:pb-8 xl:mt-10 md:shadow-xl"}>
             <form onSubmit={handleSubmit(onSubmit)} className={"flex flex-col col-span-1 col-start-1 space-y-2.5"}>
+                <p className={"sm:text-2xl font-semibold col-span-2 col-start-1"}>New game</p>
                 <div>
                     <label>Sport:</label>
                     <select {...register("sport_id", { required: true })} className={"w-full p-2"}>
@@ -90,9 +89,9 @@ export const NewGameForm = () => {
                 </div>
             </form>
 
-            <div className={"h-full h-64 sm:h-full sm:col-span-1 sm:col-start-2 sm:border justify-center bg-green-400"}>
+            <div className={"h-64 sm:h-full sm:col-span-1 sm:col-start-2 justify-center bg-green-400"}>
                 <MapContainer
-                    center={position}
+                    center={[54.389177, 18.594233]}
                     zoom={13}
                     style={{ height: "100%" }}
                     ref={e => setMap(e)}
