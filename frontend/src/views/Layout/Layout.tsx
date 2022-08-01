@@ -11,7 +11,7 @@ export const Layout = () => {
 
     return <div className={"flex flex-col h-screen"}>
         <SideMenu isOpen={sideMenuOpen} setState={setSideMenuOpen} />
-        <nav className={"flex h-20 p-10 justify-center items-center border-b-2 z-20"}>
+        <nav className={"flex h-20 p-10 justify-center items-center border-b-2 bg-white z-10"}>
             <button className={"relative r-lg-display-block md:mr-8 -mr-2"}
                     onClick={() => setSideMenuOpen(!sideMenuOpen)}>
                 {sideMenuOpen ?

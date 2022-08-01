@@ -6,9 +6,10 @@ import { useKeycloak } from "../../tools/auth/KeycloakContext";
 export const UserStatus = () => {
     const { keycloak } = useKeycloak();
     const [userInfo, setUserInfo] = useState<KeycloakProfile>();
+    const [isOpen, setIsOpen] = useState<boolean>(false);
 
     useEffect(() => {
-        if (keycloak !== undefined) {
+        if (keycloak !== undefined && keycloak.authenticated) {
             keycloak.loadUserProfile().then((res) => setUserInfo(res));
         }
     }, [keycloak, setUserInfo]);
@@ -18,8 +19,8 @@ export const UserStatus = () => {
     }
 
     const styles = {
-        container: "flex bg-gray-200 items-center rounded-full space-x-2 p-1 group",
-        text: "whitespace-nowrap pl-4 pr-3 text-md",
+        container: "flex bg-gray-200 items-center rounded-full space-x-2 p-1",
+        text: "whitespace-nowrap pl-4 pr-3 text-md font-bold",
         icon: "h-full bg-white rounded-full p-1 md:h-10 md:w-10 overflow-hidden"
     };
 
@@ -40,10 +41,10 @@ export const UserStatus = () => {
 
     return <div className={styles.container}>
         <p className={styles.text}>{`Hi, ${userInfo?.username}!` ?? "unknown"}</p>
-        <div className={"flex-row hidden group-hover:flex space-x-4 pr-2"}>
+        <div className={`flex-row overflow-hidden space-x-3 pr-3 ${isOpen ? "flex" : "hidden"}`}>
             <a href={keycloak.createLogoutUrl()}><p>logout</p></a>
             <p>profile</p>
         </div>
-        <UserIcon />
+        <button onClick={() => setIsOpen(!isOpen)}><UserIcon /></button>
     </div>;
 };

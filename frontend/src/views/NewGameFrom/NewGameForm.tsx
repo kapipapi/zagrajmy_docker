@@ -41,8 +41,8 @@ export const NewGameForm = () => {
                 <p className={"sm:text-2xl font-semibold col-span-2 col-start-1"}>New game</p>
                 <div>
                     <label>Sport:</label>
-                    <select {...register("sport_id", { required: true })} className={"w-full p-2"}>
-                        <option value="" disabled selected>SELECT SPORT</option>
+                    <select {...register("sport_id", { required: true })} className={"w-full p-2"} defaultValue={"-1"}>
+                        <option value="-1" disabled>SELECT SPORT</option>
                         {sports &&
                             sports.map((sport) => {
                                 return <option key={sport.ID} value={sport.ID}>{sport.Name}</option>;
@@ -52,8 +52,8 @@ export const NewGameForm = () => {
 
                 <div>
                     <label>Place:</label>
-                    <select {...register("place_id", { required: true })} className={"w-full p-2"}>
-                        <option value="" disabled selected>SELECT PLACE</option>
+                    <select {...register("place_id", { required: true })} className={"w-full p-2"} defaultValue={"-1"}>
+                        <option value="-1" disabled>SELECT PLACE</option>
                         {places &&
                             places.map((place) => {
                                 return <option
