@@ -8,3 +8,25 @@
     font-size: 18px;
     font-family: 'Cabin', sans-serif;
 }
+
+@layer components {
+    .r-lg-hidden-block {
+        @apply hidden lg:block;
+    }
+
+    .r-lg-display-block {
+        @apply block lg:hidden;
+    }
+
+    .r-lg-display-flex {
+        @apply flex lg:hidden;
+    }
+
+    .r-md-hidden-flex {
+        @apply hidden md:flex;
+    }
+
+    .r-md-display-flex {
+        @apply flex md:hidden;
+    }
+}

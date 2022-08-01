@@ -20,19 +20,19 @@ export const UserStatus = () => {
     const styles = {
         container: "flex bg-gray-200 items-center rounded-full space-x-2 p-1 group",
         text: "whitespace-nowrap pl-4 pr-3 text-md",
-        icon: "h-full bg-white rounded-full p-1 h-10 w-10 overflow-hidden"
+        icon: "h-full bg-white rounded-full p-1 md:h-10 md:w-10 overflow-hidden"
     };
 
     const UserIcon = () => {
         return <div className={styles.icon}>
-            <FaUser color={"black"} className={"h-7 w-7 m-auto"} />
+            <FaUser color={"black"} className={"h-5 w-5 md:h-7 md:w-7 m-auto"} />
         </div>;
     };
 
     if (!keycloak.authenticated) {
         return <a href={keycloak.createLoginUrl()}>
             <div className={styles.container}>
-                <p className={styles.text}>Login or sign up!</p>
+                <p className={styles.text}>Login <span className={"hidden md:inline"}>or sign up!</span></p>
                 <UserIcon />
             </div>
         </a>;
