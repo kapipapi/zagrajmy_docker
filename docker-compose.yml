@@ -15,15 +15,14 @@ services:
 
   db:
     container_name: db
-    image: postgres:14.1-alpine
+    build: docker/postgres
     restart: always
     environment:
-      - POSTGRES_MULTIPLE_DATABASES=app,keycloak
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     volumes:
       - ./data/db:/var/lib/postgresql/data
-      - ./docker-postgresql-multiple-databases:/docker-entrypoint-initdb.d
+      - ./docker/postgres:/docker-entrypoint-initdb.d
     networks:
       - app
 
