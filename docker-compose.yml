@@ -26,21 +26,6 @@ services:
     networks:
       - app
 
-  pgadmin:
-    user: 5050:5050
-    container_name: pgadmin
-    image: dpage/pgadmin4
-    restart: always
-    environment:
-      PGADMIN_DEFAULT_EMAIL: "${PGADMIN_DEFAULT_EMAIL}"
-      PGADMIN_DEFAULT_PASSWORD: "${PGADMIN_DEFAULT_PASSWORD}"
-      PGDATA: /var/lib/pgadmin/data
-    volumes:
-      - ./data/pgadmin:/var/lib/pgadmin
-    networks:
-      - app
-
-
   backend:
     container_name: backend
     build: backend
@@ -50,7 +35,6 @@ services:
       - .env
     depends_on:
       - db
-      - pgadmin
     networks:
       - app
 
@@ -70,7 +54,7 @@ services:
 
   keycloak:
     container_name: keycloak
-    image: jboss/keycloak:${KEYCLOAK_VERSION}
+    image: jboss/keycloak:16.1.1
     environment:
       DB_VENDOR: POSTGRES
       DB_ADDR: db
